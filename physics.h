@@ -1,5 +1,6 @@
 #ifndef PHYSICS
 #define PHYSICS
+#include <iostream>
 
 namespace physics{
 	
@@ -31,7 +32,7 @@ namespace physics{
 	}
 	
 	inline double compute_drag_force(double rho, double dragArea, double velocity){
-		return rho * dragArea * velocity * velocity / 2;
+		return (rho * dragArea * velocity * velocity) / 2.0;
 	}
 	
 }
