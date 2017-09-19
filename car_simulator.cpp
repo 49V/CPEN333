@@ -1,9 +1,20 @@
 // CAR_SIMULATOR
 #include <iostream>
 #include "physics.h"
+#include "State.h"
 
 int main(){
 	
+	State testState;
+	
+	std::cout << testState << std::endl;
+		
+	testState.set(1.5, 2.5, 3.5, 0);
+	
+	std::cout << testState << std::endl;
+	
+	
+	/*
 	double rho = 1.225;
 	
 	// Read in car mass
@@ -53,5 +64,6 @@ int main(){
 		// Print the time and current state
 		std::cout << "t: " << t << ", a: " << a << ", v:" << v << ", x: " << x << std::endl;
 	}
+	*/
 	
 }
