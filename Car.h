@@ -31,8 +31,8 @@ class Car{
 inline std::ostream& operator<<(std::ostream& os, Car& car){
 	
 	os << "Model: " << car.model << ", Engine Force: " << car.engine_force
-       << ", Mass: " << car.mass << std::endl << "t: " << car.carState.time 
-       << ", x: " << car.carState.position << ", v:" << car.carState.velocity
+       << ", Mass: " << car.mass << std::endl << "x: " 
+	   << car.carState.position << ", v:" << car.carState.velocity
        << ", a: " << car.carState.acceleration;	   
 	   
 	return os;

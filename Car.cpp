@@ -6,10 +6,10 @@
 #include "State.h"
 #include "Physics.h"
 #include "Car.h"
-#define ON 1
-#define OFF 0
+#define ON true
+#define OFF false
 
-Car::Car(std::string model, double drag_area, double engine_force, double mass){
+Car::Car(std::string model, double mass, double engine_force, double drag_area){
 	
 	this->model = model;
 	this->drag_area = drag_area;
@@ -17,9 +17,6 @@ Car::Car(std::string model, double drag_area, double engine_force, double mass){
 	this->driveEnable = OFF;
 	this->engine_force = engine_force;
 	this->mass = mass;
-	
-	
-	//std::cout << carState << std::endl;
 }
 
 // Turns the accelerator on/off
@@ -65,9 +62,13 @@ State Car::getState(){
 	return carState;
 }
 
+/*
 int main(){
 	State state;
 	Car corolla("Corolla", 0.58, 2000, 1000);
-	
 	std::cout << corolla << std:: endl;
+	
+	corolla.accelerate(true);
+	corolla.drive(1);
 }
+*/
