@@ -1,9 +1,12 @@
 /*************************************************
 *	Car.h
 *************************************************/
+#ifndef CAR
+#define CAR
 
 #include <string>
 #include "State.h"
+#include <iostream>
 
 class Car{
 	
@@ -11,6 +14,8 @@ class Car{
 	bool driveEnable;
 	double drag_area,drag_force, engine_force, mass;
 	State carState;
+	
+	friend std::ostream& operator<<(std::ostream& os, Car& car);
 	
 	public:
 	
@@ -22,3 +27,15 @@ class Car{
 		State getState();
 	
 };
+
+inline std::ostream& operator<<(std::ostream& os, Car& car){
+	
+	os << "Model: " << car.model << ", Engine Force: " << car.engine_force
+       << ", Mass: " << car.mass << std::endl << "t: " << car.carState.time 
+       << ", x: " << car.carState.position << ", v:" << car.carState.velocity
+       << ", a: " << car.carState.acceleration;	   
+	   
+	return os;
+}
+
+#endif

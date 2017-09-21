@@ -26,11 +26,11 @@ Car::Car(std::string model, double drag_area, double engine_force, double mass){
 void Car::accelerate(bool on){
 	
 	if(on){
-		this->driveEnable = ON;
+		driveEnable = ON;
 	}
 	
 	else{
-		this->driveEnable = OFF;
+		driveEnable = OFF;
 	}
 	
 	return;
@@ -39,10 +39,13 @@ void Car::accelerate(bool on){
 // Drives the car for the amount of time dt
 void Car::drive(double dt){
 	
-	double acceleration, position, velocity;
+	double rho = 1.225;
 	
-	if(this->driveEnable){
-		
+	if(driveEnable){
+		carState.acceleration = physics::compute_acceleration(engine_force - drag_force, mass);
+		carState.velocity = physics::compute_velocity(carState.acceleration, carState.velocity, dt);
+		carState.position = physics::compute_position(carState.position, carState.velocity, dt);
+		drag_force = physics::compute_drag_force(rho, drag_area, carState.velocity);
 	}
 	
 	return;
@@ -50,11 +53,11 @@ void Car::drive(double dt){
 
 // Returns the mass of the car
 double Car::getMass(){
-	return (this -> mass);
+	return mass;
 }
 
 std::string Car::getModel(){
-	return (this -> model);
+	return model;
 }
 
 // Returns the car's state;
@@ -66,7 +69,5 @@ int main(){
 	State state;
 	Car corolla("Corolla", 0.58, 2000, 1000);
 	
-	std::cout << "Mass: " << corolla.getMass() << std::endl;
-	
-	std::cout << "Model: " << corolla.getModel() << std::endl;
+	std::cout << corolla << std:: endl;
 }
