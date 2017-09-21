@@ -10,12 +10,14 @@
 
 class Car{
 	
-	std::string model;
-	bool driveEnable;
-	double drag_area,drag_force, engine_force, mass;
-	State carState;
-	
 	friend std::ostream& operator<<(std::ostream& os, Car& car);
+	
+	protected:
+	
+		std::string model;
+		bool driveEnable;
+		double drag_area,drag_force, engine_force, mass;
+		State carState;
 	
 	public:
 	
@@ -23,7 +25,7 @@ class Car{
 		std::string getModel();
 		double getMass();
 		void accelerate(bool on);
-		void drive(double dt);
+		virtual void drive(double dt);
 		State getState();
 	
 };

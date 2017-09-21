@@ -8,6 +8,7 @@
 #include "Car.h"
 #define ON true
 #define OFF false
+#define RHO 1.225
 
 Car::Car(std::string model, double mass, double engine_force, double drag_area){
 	
@@ -35,14 +36,24 @@ void Car::accelerate(bool on){
 
 // Drives the car for the amount of time dt
 void Car::drive(double dt){
-	
-	double rho = 1.225;
+	double maxSpeed = 500;
 	
 	if(driveEnable){
-		carState.acceleration = physics::compute_acceleration(engine_force - drag_force, mass);
-		carState.velocity = physics::compute_velocity(carState.acceleration, carState.velocity, dt);
-		carState.position = physics::compute_position(carState.position, carState.velocity, dt);
-		drag_force = physics::compute_drag_force(rho, drag_area, carState.velocity);
+		
+		if(carState.velocity < maxSpeed){
+			carState.acceleration = physics::compute_acceleration(engine_force - drag_force, mass);
+			carState.velocity = physics::compute_velocity(carState.acceleration, carState.velocity, dt);
+			carState.position = physics::compute_position(carState.position, carState.velocity, dt);
+			drag_force = physics::compute_drag_force(RHO, drag_area, carState.velocity);
+		}
+	
+		else{
+			carState.acceleration = 0;
+			carState.velocity = physics::compute_velocity(carState.acceleration, carState.velocity, dt);
+			carState.position = physics::compute_position(carState.position, carState.velocity, dt);
+			drag_force = physics::compute_drag_force(RHO, drag_area, carState.velocity);
+			
+		}
 	}
 	
 	return;
