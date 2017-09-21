@@ -13,6 +13,8 @@ int main(){
 	
 	std::cout << testState << std::endl;
 	
+	std::cout << "ACCELERATION: " << testState.acceleration << std::endl;
+	
 	
 	/*
 	double rho = 1.225;
