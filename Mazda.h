@@ -8,7 +8,7 @@ class Mazda : public Car{
 
 inline std::ostream& operator<<(std::ostream& os, Mazda& car){
 	
-	os << "Position: " << car.getState().position;
+	os << "Position: " << car.getState()->position;
 	   
 	return os;
 }

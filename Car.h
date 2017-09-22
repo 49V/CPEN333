@@ -25,8 +25,8 @@ class Car{
 		std::string getModel();
 		double getMass();
 		void accelerate(bool on);
-		virtual void drive(double dt);
-		State getState();
+		void drive(double dt);
+		State * getState();
 	
 };
 

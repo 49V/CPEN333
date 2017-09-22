@@ -1,4 +1,3 @@
-#include "Car.h"
 #include "Car.cpp"
 #include "Prius.h"
 #include "Tesla.h"
@@ -7,6 +6,7 @@
 #define ON true
 #define OFF false
 
+// WHY WAS INCLUDING THAT HEADER FILE CUCKING ME?
 
 int main(){
 
@@ -15,6 +15,7 @@ int main(){
 	int dt;
 	// Create a mixed fleet of 100 cars!
 	Herbie herbie;
+	
 	
 	Prius *priusFleet = new Prius[fleetSize];
 	Tesla *teslaFleet = new Tesla[fleetSize];

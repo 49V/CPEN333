@@ -36,7 +36,7 @@ void Car::accelerate(bool on){
 
 // Drives the car for the amount of time dt
 void Car::drive(double dt){
-	double maxSpeed = 500;
+	double maxSpeed = 27.8;
 	
 	if(driveEnable){
 		
@@ -69,17 +69,15 @@ std::string Car::getModel(){
 }
 
 // Returns the car's state;
-State Car::getState(){
-	return carState;
+State * Car::getState(){
+	State *state = &carState;
+	return state;
 }
-
 /*
 int main(){
-	State state;
-	Car corolla("Corolla", 0.58, 2000, 1000);
-	std::cout << corolla << std:: endl;
-	
-	corolla.accelerate(true);
-	corolla.drive(1);
+	Car corolla("Beans", 1, 2, 3);
+	std::cout << corolla.getState()->position;
+	corolla.getState()->position = 22.56;
+	std::cout << corolla.getState()->position;
 }
 */
