@@ -67,7 +67,6 @@ void parallel_quicksort(std::vector<int>& array, int start, int end){
 		
 	//Step 1: Partition your arrays
 	// The number of threads you create has to be a multiple of 2^n if you want to assign one thread to each quicksort call
-	
 	partitionIndex[0] = partition(array, 0 ,array.size() - 1);
 	partitionIndex[1] = partition(array, 0, partitionIndex[0] - 1);
 	partitionIndex[2] = partition(array, partitionIndex[0] + 1, array.size() - 1);
