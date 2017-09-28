@@ -20,17 +20,17 @@ add_executable(maze_runner_ui src/maze_runner_ui.cpp)
 target_link_libraries(maze_runner_ui Threads::Threads)
 
 # parent
-add_executable(maze_runner_parent src/maze_runner_parent.cpp)
-target_link_libraries(maze_runner_parent Threads::Threads)
+add_executable(maze_runner_main src/maze_runner_main.cpp)
+target_link_libraries(maze_runner_main Threads::Threads)
 
 # parent
-add_executable(maze_runner_child src/maze_runner_child.cpp)
-target_link_libraries(maze_runner_child Threads::Threads)
+add_executable(maze_runner src/maze_runner.cpp)
+target_link_libraries(maze_runner Threads::Threads)
 
 # link with unix realtime library
 if(UNIX AND NOT APPLE)
-    target_link_libraries(maze_runner_parent rt)
-    target_link_libraries(maze_runner_child rt)
+    target_link_libraries(maze_runner_main rt)
+    target_link_libraries(maze_runner rt)
     target_link_libraries(maze_runner_ui rt)
 endif()
 
