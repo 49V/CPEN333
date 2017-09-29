@@ -32,8 +32,8 @@ class monteCarloIntegration{
 	}
 	
 	virtual double get_density(double x, double y, double z);
-	void calculate_center_of_mass(std::vector<double>& Cx, std::vector<double>& Cy, std::vector<double>& Cz, int index, double numberOfSamples);
-	void parallel_calculate_center_of_mass(double& Cx, double& Cy, double& Cz, int index);
+	void calculate_center_of_mass(std::vector<double>& rhoAverage, std::vector<double>& Cx, std::vector<double>& Cy, std::vector<double>& Cz, int index, double numberOfSamples);
+	void parallel_calculate_center_of_mass(double& rhoAverage, double& Cx, double& Cy, double& Cz, int index);
 	double calculate_radius(double x, double y, double z);
 	
 };
