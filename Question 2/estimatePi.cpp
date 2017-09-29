@@ -30,7 +30,6 @@ double estimate_pi(int numberOfSamples){
 	std::default_random_engine rnd(std::chrono::system_clock::now().time_since_epoch().count());
 	std::uniform_real_distribution<double> distribution(LOWER_LIMIT, UPPER_LIMIT);
 	
-	
 	// Generate random distributions for x and y samples
 	for(int i = 0; i < numberOfSamples; ++i){
 		x[i] = distribution(rnd);
@@ -56,6 +55,85 @@ double estimate_pi(int numberOfSamples){
 	estimatedPi = unitArea * probability;
 	
 	return estimatedPi;
+}
+
+/*
+* Given an number of samples, returns an estimate of Pi.
+* This version cleverly uses multithreading to speed up computations
+* @param int numberOfSamples:
+* An integer number of samples greater than 0
+* @return double estimatedPi:
+* The estimated value for pi
+*/
+double estimate_pi_multithread(int numberOfSamples){
+	
+	double estimatedPi, probability;
+	double samplesInZone = 0;
+	const double unitArea = 4;
+	
+	// Get the number of available cores
+	int numberOfThreads = std::thread::hardware_concurrency();
+
+	// Hit counts for each thread
+	std::vector<int> hits(numberOfThreads, 0);
+	
+	//Create and store our threads
+	std::vector<std::thread> threads;
+	int mSamples = 0;
+	
+	for(int i = 0; i < numberOfThreads - 1; ++i){
+		threads.push_back(std::thread(pi_hits, std::ref(hits), i, numberOfSamples / numberOfThreads));
+		mSamples += numberOfSamples / numberOfThreads;
+	}
+	
+	// Remaining samples
+	threads.push_back(std::thread(pi_hits, std::ref(hits), numberOfThreads - 1, numberOfSamples - mSamples));
+	
+	// Wait for threads to finish
+	for(int i = 0; i < numberOfThreads; ++i){
+		threads[i].join();
+	}
+	
+	for(int i = 0; i < numberOfThreads; ++i){
+		samplesInZone += hits[i];
+	}
+	
+	probability = samplesInZone / double(numberOfSamples);
+	estimatedPi =  probability * unitArea;
+
+	return estimatedPi;
+	
+}
+
+// count number of hits using nsamples, populates hits[idx]
+void pi_hits(std::vector<int>& hits, int index, int numberOfSamples) {
+
+	double x, y, radius;
+	const double circleRadius = 1;
+	int hitCount = 0;
+	
+	// single instance of random engine and distribution
+	static std::default_random_engine rnd;
+	static std::uniform_real_distribution<double> dist(-1.0, 1.0);
+	
+	// Generate the distribution
+	for(int i = 0; i < numberOfSamples; ++i){
+
+		x = dist(rnd);
+		y = dist(rnd);
+		
+		radius = calculate_radius(x, y);
+		
+		if(radius <= circleRadius){
+			++hitCount;
+		}
+		
+	}
+  
+	hits[index] = hitCount;
+  
+	return;
+  
 }
 
 /*
@@ -87,7 +165,6 @@ double estimate_pi_multithread_naive(int numberOfSamples){
 	}
 	
 	// Check how many hits we have
-	
 	for(int i = 0; i < numberOfSamples; ++i){
 		if(hits[i]){
 			++samplesInZone;
@@ -99,7 +176,6 @@ double estimate_pi_multithread_naive(int numberOfSamples){
 
 	return estimatedPi;
 }
-
 
 /*
 * Generates a random sample and sets the value of 'inside' to true
@@ -156,7 +232,8 @@ double calculate_radius(double x, double y){
 
 int main(){
 	
-	const int numberOfSamples = 1000;
+	const int numberOfSamples = 100000000;
+	
 	
 	// Sequential
 	auto t1 = std::chrono::high_resolution_clock::now();
@@ -168,9 +245,11 @@ int main(){
 	std::cout << "Sequential: My estimate of PI is: " << estimatedPi << std::endl;
 	std::cout << "The runtime was: " << ms << std::endl;
 
+	std::cout << "------------------------------------" << std::endl;
+	
 	// Concurrent
 	t1 = std::chrono::high_resolution_clock::now();
-	estimatedPi = estimate_pi_multithread_naive(numberOfSamples);
+	estimatedPi = estimate_pi_multithread(numberOfSamples);
 	t2 = std::chrono::high_resolution_clock::now();
 	duration = t2 - t1;
 	duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
@@ -178,6 +257,7 @@ int main(){
 	std::cout << "Concurrent: My estimate of PI is: " << estimatedPi << std::endl;
 	std::cout << "The runtime was: " << ms << std::endl;
 
+	
 	
 	return 0;
 }
