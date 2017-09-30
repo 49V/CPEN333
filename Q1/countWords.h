@@ -1,6 +1,7 @@
-#ifndef WORDCOUNT
-#define WORDCOUNT
+#ifndef COUNTWORDS
+#define COUNTWORDS
 
+#include <iostream>
 #include <string>
 
 /**
@@ -14,7 +15,7 @@
 * @param startIndex Starting index to search for wrods
 * @return Number of words in the line
 */
-int word_count(const std::string& line, int start_idx);
+int countWords(const std::string& line, int startIndex);
 
 
 #endif
