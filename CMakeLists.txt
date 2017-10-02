@@ -46,3 +46,8 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(malware rt)
 endif()
 
+# set working directories
+if (${CMAKE_VERSION} VERSION_GREATER "3.8.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.8.0")
+    set_target_properties(system_logger_parent PROPERTIES
+            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
+endif()
