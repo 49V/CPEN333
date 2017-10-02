@@ -48,6 +48,8 @@ endif()
 
 # set working directories
 if (${CMAKE_VERSION} VERSION_GREATER "3.8.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.8.0")
-    set_target_properties(system_logger_parent PROPERTIES
+    set_target_properties(malware PROPERTIES
+            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
+    set_target_properties(maze_runner_main PROPERTIES
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
 endif()
