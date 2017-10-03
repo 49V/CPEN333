@@ -9,7 +9,7 @@ include_directories(../library/include)
 
 # copy data files
 FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}")
-FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}/${CONFIGURATION}")
+FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}/Debug")
 
 #===================================================
 #  Maze Runner
@@ -53,3 +53,4 @@ if (${CMAKE_VERSION} VERSION_GREATER "3.8.0" OR ${CMAKE_VERSION} VERSION_EQUAL "
     set_target_properties(maze_runner_main PROPERTIES
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
 endif()
+
