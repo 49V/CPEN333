@@ -1,3 +1,5 @@
 // Ignore all files with extension .exe
 *.exe
 
+// Ignore all files with extension .gch
+*.gch
