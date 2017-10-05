@@ -156,7 +156,8 @@ int main() {
 
   // map and mutex for thread safety
   std::mutex mutex;
-  std::map<std::string,int> wordCounts;
+  std::map<std::string, int> wordCounts;
+  std::map<std::string, int> wordCountsSequential;
   std::vector<std::thread> threads;
   
   std::vector<std::string> fileNames = {
@@ -172,6 +173,9 @@ int main() {
       "data/shakespeare_romeo_and_juliet.txt",
   };
 
+  
+  // Multithreaded
+  auto t1 = std::chrono::high_resolution_clock::now();
   // Create a thread for each file
   for(int i = 0; i < fileNames.size(); ++i){
 	threads.push_back(std::thread(countCharacterWords, std::ref(fileNames[i]), std::ref(mutex), std::ref(wordCounts)));
@@ -181,6 +185,10 @@ int main() {
   for(int i = 0; i < threads.size(); ++i){
 	  threads[i].join();
   }
+  auto t2 = std::chrono::high_resolution_clock::now();
+  auto duration = t2 - t1;
+  auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+  long msThreaded = duration_ms.count();
   
   auto sortedWordCounts = sortCharactersByWordCount(wordCounts);
 
@@ -188,8 +196,28 @@ int main() {
   for (const auto& entry : sortedWordCounts) {
     std::cout << entry.first << ", " << entry.second << std::endl;
   }
+  
+  t1 = std::chrono::high_resolution_clock::now();
+  // Single threaded
+  for(int i = 0; i < fileNames.size(); ++i){
+	  countCharacterWords(fileNames[i], mutex, wordCountsSequential);
+  }
+  t2 = std::chrono::high_resolution_clock::now();
+  duration = t2 - t1;
+  duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+  long msSequential = duration_ms.count();
+  
+  std::cout << "----------------------" << std::endl;
+  
+  sortedWordCounts = sortCharactersByWordCount(wordCountsSequential);
+  // results
+  for (const auto& entry : sortedWordCounts) {
+    std::cout << entry.first << ", " << entry.second << std::endl;
+  }
 
-  std::cout << std::endl << "Press ENTER to continue..." << std::endl;
+  std::cout << std::endl << "Press DOGO to continue..." << std::endl;
+  std::cout << "Threaded runtime (ms) : " << msThreaded << std::endl;
+  std::cout << "Sequential runtime (ms) :" << msSequential << std::endl;
   std::cin.get();
 
   return 0;
