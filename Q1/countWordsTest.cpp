@@ -1,4 +1,3 @@
-#include "countWords.cpp"
 #include "countWords.h"
 #include <exception>
 #include <iostream>
@@ -97,6 +96,7 @@ int main(){
 	std::string test4 = "";
 	std::string test5 = "  "; 
 	std::string test6 = "Beans";
+	std::string testSpecial = "          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50";
 	
 	int startIndex = 0;
 	
@@ -106,6 +106,7 @@ int main(){
 	int expected4 = 0;
 	int expected5 = 0;
 	int expected6 = 1;
+	int expectedSpecial = 50;
 	
 	// Test cases for varying our indices
 	std::string test7 = " six five four three two one ";
@@ -134,6 +135,7 @@ int main(){
 		countWordsTester(test4, startIndex, expected4);
 		countWordsTester(test5, startIndex, expected5);
 		countWordsTester(test6, startIndex, expected6);
+		countWordsTester(testSpecial, startIndex, expectedSpecial);
 		
 		// Testing cases where we vary the indices
 		countWordsTester(test7, testIndex1, expectedIndex1);

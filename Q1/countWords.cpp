@@ -1,9 +1,10 @@
-#include "countWords.h"
-
 /**
 * CPEN 333 Lab 3
 * Author : Moshe Lawlor
 */
+
+#ifndef COUNTCPP
+#define COUNTCPP
 
 int countWords(const std::string& line, int startIndex){
 	
@@ -55,3 +56,5 @@ int main(){
 	return 0;
 }
 */
+
+#endif
