@@ -8,6 +8,8 @@ find_package( Threads REQUIRED )  # Multithreading package required
 include_directories(../library/include)
 # add json support
 include_directories(include)
+# access to src/ files for tests
+include_directories(src)
 
 # copy data files
 FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}")
@@ -18,12 +20,15 @@ FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}/Debug")
 #===================================================
 
 set(MUSIC_LIBRARY_HEADERS
-        src/music_library.h
-        src/music_library_api.h
-        src/music_library_json.h
-        src/music_library_api_json.h
-        src/music_library_messages.h
-        src/music_library_song.h)
+        src/MusicLibrary.h
+        src/MusicLibraryApi.h
+        src/JsonConverter.h
+        src/JsonMusicLibraryApi.h
+        src/Message.h
+        src/Song.h)
+
+# tests
+add_executable(music_library_test test/music_library_test.cpp ${MUSIC_LIBRARY_HEADERS})
 
 # server
 add_executable(music_library_server src/music_library_server.cpp ${MUSIC_LIBRARY_HEADERS})
