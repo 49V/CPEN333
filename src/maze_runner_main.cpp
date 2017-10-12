@@ -17,6 +17,7 @@ void load_maze(const std::string& filename, MazeInfo& minfo) {
   minfo.rows = 0;
   minfo.cols = 0;
 
+  
   std::ifstream fin(filename);
   std::string line;
 
@@ -49,17 +50,19 @@ void load_maze(const std::string& filename, MazeInfo& minfo) {
  * @param rinfo runner info to populate
  */
 void init_runners(const MazeInfo& minfo, RunnerInfo& rinfo) {
+	
   rinfo.nrunners = 0;
 
   // fill in random placements for future runners
-  std::default_random_engine rnd(
-      (unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
+  std::default_random_engine rnd((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
   std::uniform_int_distribution<size_t> rdist(0, minfo.rows);
   std::uniform_int_distribution<size_t> cdist(0, minfo.cols);
-  for (size_t i=0; i<MAX_RUNNERS; ++i) {
+  
+  for (size_t i=0; i < MAX_RUNNERS; ++i) {
     // generate until on an empty space
     size_t r,c;
     do {
+
       r = rdist(rnd);
       c = cdist(rnd);
     } while (minfo.maze[c][r] != EMPTY_CHAR);
@@ -71,7 +74,7 @@ void init_runners(const MazeInfo& minfo, RunnerInfo& rinfo) {
 int main(int argc, char* argv[]) {
 
   // read maze from command-line, default to maze0
-  std::string maze = "data/maze0.txt";
+  std::string maze = "./data/maze2.txt";
   if (argc > 1) {
     maze = argv[1];
   }
@@ -79,7 +82,17 @@ int main(int argc, char* argv[]) {
   //===============================================================
   //  TODO:  CREATE SHARED MEMORY AND INITIALIZE IT
   //===============================================================
+  // Create shared memory
+  cpen333::process::shared_object<SharedData> mazeMemory(MAZE_MEMORY_NAME);
 
+  // Read in the maze and populate it
+  load_maze(maze, mazeMemory->minfo);
+  
+  // Read in the runners and populate them
+  init_runners(mazeMemory->minfo, mazeMemory->rinfo);
+  // Initialize quit to false
+  mazeMemory->quit = false;
+  
   std::cout << "Keep this running until you are done with the program." << std::endl << std::endl;
   std::cout << "Press ENTER to quit." << std::endl;
   std::cin.get();
@@ -87,5 +100,7 @@ int main(int argc, char* argv[]) {
   //===============================================================
   //  TODO:  INFORM OTHER PROCESSES TO QUIT
   //===============================================================
+  mazeMemory->quit = true;
+  
   return 0;
 }

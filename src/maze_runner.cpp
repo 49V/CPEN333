@@ -12,7 +12,7 @@ class MazeRunner {
   cpen333::process::mutex mutex_;
 
   // local copy of maze
-  MazeInfo minfo_;
+    MazeInfo minfo_;
 
   // runner info
   size_t idx_;   // runner index
@@ -21,11 +21,11 @@ class MazeRunner {
  public:
 
   MazeRunner() : memory_(MAZE_MEMORY_NAME), mutex_(MAZE_MUTEX_NAME),
-                 minfo_(), idx_(0), loc_() {
+                 minfo_(), idx_(0), loc_(){
 
     // copy maze contents
     minfo_ = memory_->minfo;
-
+	
     {
       // protect access of number of runners
       std::lock_guard<decltype(mutex_)> lock(mutex_);
@@ -36,6 +36,8 @@ class MazeRunner {
     // get current location
     loc_[COL_IDX] = memory_->rinfo.rloc[idx_][COL_IDX];
     loc_[ROW_IDX] = memory_->rinfo.rloc[idx_][ROW_IDX];
+	
+	minfo_.maze[loc_[COL_IDX]][loc_[ROW_IDX]] = 'S';
 
   }
 
@@ -44,28 +46,99 @@ class MazeRunner {
    * @return 1 for success, 0 for failure, -1 to quit
    */
   int go() {
-    // current location
-    int c = loc_[COL_IDX];
-    int r = loc_[ROW_IDX];
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
+	int x = memory_->rinfo.rloc[idx_][COL_IDX];
+	int y = memory_->rinfo.rloc[idx_][ROW_IDX];
+	
     //==========================================================
     // TODO: NAVIGATE MAZE
     //==========================================================
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	
+	findPath(x, y);
 
     // failed to find exit
     return 0;
   }
+  
+  /**
+  * Checks whether the coordinate given leads to a valid path
+  * @param x X co-ordinate
+  * @param y Y co-ordinate
+  */
+  
+  int findPath(int x, int y){
+	  
+	// If our next coordinate is outside a maze wall, return false
+	if(minfo_.maze[x][y] == 'X'){
+		return false;
+	}
+	
+	// If x,y is the exit, return true
+	if(minfo_.maze[x][y] == 'E'){
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		memory_->rinfo.rloc[idx_][COL_IDX] = x;
+		memory_->rinfo.rloc[idx_][ROW_IDX] = y;
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		return true;
+	}
+	
+	// If x,y is not open, return false
+	if(minfo_.maze[x][y] != ' ' && minfo_.maze[x][y] != 'S'){
+		return false;
+	}
+	
+	std::this_thread::sleep_for(std::chrono::milliseconds(150));
+	memory_->rinfo.rloc[idx_][COL_IDX] = x;
+	memory_->rinfo.rloc[idx_][ROW_IDX] = y;
+	std::this_thread::sleep_for(std::chrono::milliseconds(150));
+	
+	// Mark as a part of the solution path
+	minfo_.maze[x][y] = '+';
+	
+	// Go North and check if we can find the path :)
+	if(findPath(x, y - 1) == true){
+		return true;
+	}
+	
+	// Go East
+	if(findPath(x + 1, y) == true){
+		return true;
+	}
+	
+	// Go South
+	if(findPath(x, y + 1) == true){
+		return true;
+	}
+	
+	// Go West
+	if(findPath(x - 1, y) == true){
+		return true;
+	}
+	
+	minfo_.maze[x][y] = 'r';
+	
+	return false;
+	  
+  }
 
+  
+  bool quit(){
+	  return memory_->quit;
+  }
+  
 };
 
 int main() {
 
   MazeRunner runner;
-  runner.go();
-
-  return 0;
+  int mazeResult;
+  
+  //** ADJUST FOR WHEN TOLD TO QUIT
+  while(!runner.quit()){
+	mazeResult = runner.go();
+  }
+  
+  std::cout << "END" << std::endl;
+  
+  return mazeResult;
 }

@@ -32,6 +32,8 @@ class MazeUI {
 
   MazeUI() : display_(), memory_(MAZE_MEMORY_NAME), mutex_(MAZE_MUTEX_NAME){
 
+	MazeInfo& minfo = memory_->minfo;
+  
     // clear display and hide cursor
     display_.clear_all();
     display_.set_cursor_visible(false);
@@ -49,6 +51,22 @@ class MazeUI {
     //===========================================================
     // TODO: SEARCH MAZE FOR EXIT LOCATION
     //===========================================================
+	for(int i = 0; i < minfo.rows; ++i){
+		
+		for(int j = 0; j < minfo.cols; ++j){
+			
+			if(minfo.maze[i][j] == 'E'){
+				
+				exit_[ROW_IDX] = i;
+				exit_[COL_IDX] = j;
+				
+			}
+			
+		}
+		
+	}
+	
+	std::cout << "EXIT LOCATION X: " << exit_[ROW_IDX] << "Y: " << exit_[COL_IDX] << std::endl;
 
   }
 
@@ -87,28 +105,32 @@ class MazeUI {
    */
   void draw_runners() {
 
+	// Need to protect the Runner Info when first being read because a runner's 
+	// position can easily be changed while we redraw runner locations
+	
+	std::lock_guard<decltype(mutex_)> lock(mutex_);
     RunnerInfo& rinfo = memory_->rinfo;
 
     // draw all runner locations
     for (size_t i=0; i<rinfo.nrunners; ++i) {
-      char me = 'A'+i;
-      int newr = rinfo.rloc[i][ROW_IDX];
-      int newc = rinfo.rloc[i][COL_IDX];
+      char me = 'A' + i;
+      int newRow = rinfo.rloc[i][ROW_IDX];
+      int newColumn = rinfo.rloc[i][COL_IDX];
 
       // if not already at the exit...
-      if (newc != exit_[COL_IDX] || newr != exit_[ROW_IDX]) {
-        if (newc != lastpos_[i][COL_IDX]
-            || newr != lastpos_[i][ROW_IDX]) {
+      if (newColumn != exit_[COL_IDX] || newRow != exit_[ROW_IDX]) {
+        if (newColumn != lastpos_[i][COL_IDX]
+            || newRow != lastpos_[i][ROW_IDX]) {
 
           // zero out last spot and update known location
-          display_.set_cursor_position(YOFF+lastpos_[i][ROW_IDX], XOFF+lastpos_[i][COL_IDX]);
+          display_.set_cursor_position(YOFF + lastpos_[i][ROW_IDX], XOFF + lastpos_[i][COL_IDX]);
           std::printf("%c", EMPTY_CHAR);
-          lastpos_[i][COL_IDX] = newc;
-          lastpos_[i][ROW_IDX] = newr;
+          lastpos_[i][COL_IDX] = newColumn;
+          lastpos_[i][ROW_IDX] = newRow;
         }
 
         // print runner at new location
-        display_.set_cursor_position(YOFF+newr, XOFF+newc);
+        display_.set_cursor_position(YOFF + newRow, XOFF + newColumn);
         std::printf("%c", me);
       } else {
 
@@ -116,8 +138,8 @@ class MazeUI {
         if (lastpos_[i][COL_IDX] != exit_[COL_IDX] || lastpos_[i][ROW_IDX] != exit_[ROW_IDX]) {
           display_.set_cursor_position(YOFF+lastpos_[i][ROW_IDX], XOFF+lastpos_[i][COL_IDX]);
           std::printf("%c", EMPTY_CHAR);
-          lastpos_[i][COL_IDX] = newc;
-          lastpos_[i][ROW_IDX] = newr;
+          lastpos_[i][COL_IDX] = newColumn;
+          lastpos_[i][ROW_IDX] = newRow;
 
           // display a completion message
           display_.set_cursor_position(YOFF, XOFF+memory_->minfo.cols+2);
@@ -146,12 +168,15 @@ class MazeUI {
 };
 
 int main() {
+	
+  std::cout << "Starting Maze Runner UI" << std::endl;
 
   // initialize previous locations of characters
   MazeUI ui;
   ui.draw_maze();
-
+  
   // continue looping until main program has quit
+  
   while(!ui.quit()) {
     ui.draw_runners();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
