@@ -68,77 +68,98 @@ class MazeRunner {
   
   int findPath(int x, int y){
 	  
-	// If our next coordinate is outside a maze wall, return false
-	if(minfo_.maze[x][y] == 'X'){
-		return false;
-	}
-	
-	// If x,y is the exit, return true
-	if(minfo_.maze[x][y] == 'E'){
+	if(!(memory_->quit)){
+		
+		// If our next coordinate is outside a maze wall, return false
+		if(minfo_.maze[x][y] == 'X'){
+			return false;
+		}
+		
+		// If x,y is the exit, return true
+		if(minfo_.maze[x][y] == 'E'){
+			std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			memory_->rinfo.rloc[idx_][COL_IDX] = x;
+			memory_->rinfo.rloc[idx_][ROW_IDX] = y;
+			std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			return true;
+		}
+		
+		// If x,y is not open, return false
+		if(minfo_.maze[x][y] != ' ' && minfo_.maze[x][y] != 'S'){
+			return false;
+		}
+		
 		std::this_thread::sleep_for(std::chrono::milliseconds(150));
 		memory_->rinfo.rloc[idx_][COL_IDX] = x;
 		memory_->rinfo.rloc[idx_][ROW_IDX] = y;
 		std::this_thread::sleep_for(std::chrono::milliseconds(150));
-		return true;
-	}
-	
-	// If x,y is not open, return false
-	if(minfo_.maze[x][y] != ' ' && minfo_.maze[x][y] != 'S'){
+		
+		// Mark as a part of the solution path
+		minfo_.maze[x][y] = '+';
+		
+		// Go North and check if we can find the path :)
+		if(findPath(x, y - 1) == true){
+			return true;
+		}
+		
+		// Go East
+		if(findPath(x + 1, y) == true){
+			return true;
+		}
+		
+		// Go South
+		if(findPath(x, y + 1) == true){
+			return true;
+		}
+		
+		// Go West
+		if(findPath(x - 1, y) == true){
+			return true;
+		}
+		
+		minfo_.maze[x][y] = 'r';
+		
 		return false;
+	
 	}
 	
-	std::this_thread::sleep_for(std::chrono::milliseconds(150));
-	memory_->rinfo.rloc[idx_][COL_IDX] = x;
-	memory_->rinfo.rloc[idx_][ROW_IDX] = y;
-	std::this_thread::sleep_for(std::chrono::milliseconds(150));
-	
-	// Mark as a part of the solution path
-	minfo_.maze[x][y] = '+';
-	
-	// Go North and check if we can find the path :)
-	if(findPath(x, y - 1) == true){
-		return true;
-	}
-	
-	// Go East
-	if(findPath(x + 1, y) == true){
-		return true;
-	}
-	
-	// Go South
-	if(findPath(x, y + 1) == true){
-		return true;
-	}
-	
-	// Go West
-	if(findPath(x - 1, y) == true){
-		return true;
-	}
-	
-	minfo_.maze[x][y] = 'r';
-	
-	return false;
+	// Will have to go through all recursive calls to unwind, but at least memory 
+  // it is RAII. Could use an exception as well
+  else{
+	  std::cout << "DUDE" << std:: endl;
+	  return 0;
+  }
 	  
   }
-
   
-  bool quit(){
-	  return memory_->quit;
+  int getMagicNumber(){
+	  std::lock_guard<decltype(mutex_)> lock(mutex_);
+	  return memory_->magicNumber;
   }
   
+
 };
 
 int main() {
 
-  MazeRunner runner;
-  int mazeResult;
-  
-  //** ADJUST FOR WHEN TOLD TO QUIT
-  while(!runner.quit()){
-	mazeResult = runner.go();
+MazeRunner runner;
+
+if(runner.getMagicNumber() == MAGIC_CONSTANT )
+  {
+	  int mazeResult;
+	  
+	  mazeResult = runner.go();
+	  
+	  return mazeResult;
   }
   
-  std::cout << "END" << std::endl;
+  else{
+	  std::cout << "ERROR: NOT INITIALIZED" << std::endl;
+	  std::cout << "Press ENTER to quit." << std::endl;
+	  std::cin.get();
+	  
+	  return 0;
+  }
   
-  return mazeResult;
+  
 }

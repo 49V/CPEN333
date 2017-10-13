@@ -165,22 +165,40 @@ class MazeUI {
     display_.clear_all();
     display_.reset();
   }
+  
+  int getMagicNumber(){
+	  std::lock_guard<decltype(mutex_)> lock(mutex_);
+	  return memory_->magicNumber;
+  }
 };
 
 int main() {
-	
-  std::cout << "Starting Maze Runner UI" << std::endl;
 
-  // initialize previous locations of characters
   MazeUI ui;
-  ui.draw_maze();
-  
-  // continue looping until main program has quit
-  
-  while(!ui.quit()) {
-    ui.draw_runners();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
 
-  return 0;
+  if(ui.getMagicNumber() == MAGIC_CONSTANT )
+  {
+	  std::cout << "Starting Maze Runner UI" << std::endl;
+
+	  // initialize previous locations of characters
+	  MazeUI ui;
+	  ui.draw_maze();
+	  
+	  // continue looping until main program has quit
+	  
+	  while(!ui.quit()) {
+		ui.draw_runners();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	  }
+
+	  return 0;
+  }
+  
+  else{
+	  std::cout << "ERROR: NOT INITIALIZED" << std::endl;
+	  std::cout << "Press ENTER to quit." << std::endl;
+	  std::cin.get();
+	  
+	  return 0;
+  }
 }

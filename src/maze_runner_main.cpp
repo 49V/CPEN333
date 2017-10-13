@@ -5,12 +5,14 @@
 #include <thread>
 #include <random>
 #include <cpen333/process/shared_memory.h>
+#include <cpen333/process/mutex.h>
 
 /**
  * Reads a maze from a filename and populates the maze
  * @param filename file to load maze from
  * @param minfo maze info to populate
  */
+ 
 void load_maze(const std::string& filename, MazeInfo& minfo) {
 
   // initialize number of rows and columns
@@ -84,9 +86,15 @@ int main(int argc, char* argv[]) {
   //===============================================================
   // Create shared memory
   cpen333::process::shared_object<SharedData> mazeMemory(MAZE_MEMORY_NAME);
-
+  cpen333::process::mutex mutex(MAZE_MUTEX_NAME);
+	
   // Read in the maze and populate it
   load_maze(maze, mazeMemory->minfo);
+  
+  // Set magic number
+  std::unique_lock<decltype(mutex)> lock(mutex);
+  mazeMemory->magicNumber = MAGIC_CONSTANT;
+  lock.unlock();
   
   // Read in the runners and populate them
   init_runners(mazeMemory->minfo, mazeMemory->rinfo);
@@ -102,5 +110,9 @@ int main(int argc, char* argv[]) {
   //===============================================================
   mazeMemory->quit = true;
   
+  // Clear magic number
+  lock.lock();
+  mazeMemory->magicNumber = 0;
+  lock.unlock();
   return 0;
 }

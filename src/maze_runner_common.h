@@ -13,6 +13,7 @@
 
 #define MAX_MAZE_SIZE 80
 #define MAX_RUNNERS   50
+#define MAGIC_CONSTANT 2567
 
 struct MazeInfo {
   int rows;           // rows in maze
@@ -29,6 +30,7 @@ struct SharedData {
   MazeInfo minfo;    // maze info
   RunnerInfo rinfo;  // runner info
   bool quit;         // tell everyone to quit
+  int magicNumber;
 };
 
 #endif //LAB4_MAZE_RUNNER_COMMON_H
