@@ -106,6 +106,15 @@ void do_search(MusicLibraryApi &api) {
   std::cout << std::endl;
 }
 
+// search for songs on server
+void do_goodbye(MusicLibraryApi &api) {
+  GoodbyeMessage msg;
+  if (api.sendMessage(msg)) {
+    std::cout << "Goodbye." << std::endl;
+  }
+  std::cout << std::endl;
+}
+
 int main() {
 
   // start client
@@ -141,6 +150,7 @@ int main() {
           do_search(api);
           break;
         case CLIENT_QUIT:
+          do_goodbye(api);
           break;
         default:
           std::cout << "Invalid command number " << cmd << std::endl << std::endl;
