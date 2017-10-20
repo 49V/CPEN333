@@ -10,7 +10,7 @@
  * queries, and results are parsed from JSON.
  *
  * Communication format:
- *   JSON_ID (1 byte), string size (4 bytes - little endian), JSON ASCII string
+ *   JSON_ID (1 byte), string size (4 bytes - big endian), JSON ASCII string
  *
  * E.g. to send {"status": "OK"}, which has a length of 17 including the terminating
  * zero, the following bytes will be sent
