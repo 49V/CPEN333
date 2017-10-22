@@ -8,6 +8,7 @@
 #include "Customer.h"
 #include "Order.h"
 #include "OrderQueue.h"
+#include "safe_printf.h"
 
 /**
  * Servers take completed orders from the chef and deliver

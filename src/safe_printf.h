@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <mutex>
+#include <cstdarg>
 
 /**
  * Thread-safe printing to console (prevent garbled messages) using printf format
@@ -10,7 +11,7 @@
  * @param ... list of additional arguments
  */
 inline void safe_printf(char const * const format, ...) {
-  va_list args;
+  std::va_list args;
   va_start(args, format);
   static std::mutex mutex;
   {

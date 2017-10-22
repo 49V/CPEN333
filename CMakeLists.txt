@@ -15,7 +15,7 @@ FILE(COPY data DESTINATION "${CMAKE_BINARY_DIR}/Debug")
 set(LAB6_HEADERS src/Order.h src/CircularOrderQueue.h
         src/DynamicOrderQueue.h src/SingleOrderQueue.h
         src/OrderQueue.h src/Chef.h src/Customer.h src/Server.h
-        src/Menu.h)
+        src/Menu.h src/safe_printf.h)
 
 #=================================================================
 #  Restauranat
