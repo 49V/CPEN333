@@ -9,7 +9,7 @@
 #include "MusicLibrary.h"
 #include "JsonMusicLibraryApi.h"
 
-#include <cpen333/process/socket.h>
+#include <C:\Users\Mozer\Documents\School\FourthYear\CPEN333\Library\library\include\cpen333\process\socket.h>
 
 #include <iostream>
 #include <limits>
@@ -48,6 +48,7 @@ void do_add(MusicLibraryApi &api) {
   std::getline(std::cin, title);
 
   // send message to server and wait for response
+  
   Song song(artist, title);
   AddMessage msg(song);
   if (api.sendMessage(msg)) {
@@ -71,6 +72,38 @@ void do_remove(MusicLibraryApi &api) {
   //=================================================
   // TODO: Implement "remove" functionality
   //=================================================
+  std::string artist, title;
+  
+  // Collect artist and title;
+  std::cout << std::endl << "Remove Song" << std::endl;
+  std::cout << "    Artist: ";
+  std::getline(std::cin, artist);
+  std::cout << "    Title:  ";
+  std::getline(std::cin, title);
+  
+  // send message to server and wait for response
+  Song song(artist, title);
+
+  RemoveMessage msg(song);
+
+  if(api.sendMessage(msg)){
+	
+	// get response
+	std::unique_ptr<Message> messageResponse = api.recvMessage();
+	RemoveResponseMessage& response = (RemoveResponseMessage&) (*messageResponse);
+	  
+	if(response.status == MESSAGE_STATUS_OK){
+	    std::cout << std::endl << "   \"" << song << "\" removed successfull." << std::endl;
+	}
+	
+	else{
+		std::cout << std::endl << "   Removing \"" << song << "\" failed: " << response.info << std::endl;
+	}
+	
+	  
+  }
+  
+  std::cout << std::endl;
   
 }
 

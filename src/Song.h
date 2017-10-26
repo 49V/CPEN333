@@ -1,7 +1,9 @@
 /**
  *@file
  *
- * This file contains the definition of a Song in our database
+ * This file contains the definition of a Song in our database. It defines 
+ * basic attributes for identifying a song and also creates the required 
+ * comparator functions for sorting songs.
  *
  */
 

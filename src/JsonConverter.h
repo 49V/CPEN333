@@ -114,6 +114,32 @@ class JsonConverter {
   //======================================================
 
   /**
+  * Converts a "Remove" message to a JSON object
+  * @param remove message
+  * @return JSON object representation
+  */
+  static JSON toJSON(const RemoveMessage &remove){
+	  JSON j;
+	  j[MESSAGE_TYPE] = MESSAGE_REMOVE;
+	  j[MESSAGE_SONG] = toJSON(remove.song);
+	  return j;
+  }
+  
+  /**
+  * Converts an "remove" response message to a JSON object
+  * @param remove_response message
+  * @return JSON object representation
+  */
+  static JSON toJSON(const RemoveResponseMessage &remove_response){
+	  JSON j;
+	  j[MESSAGE_TYPE] = MESSAGE_REMOVE_RESPONSE; 
+	  j[MESSAGE_STATUS] = remove_response.status;
+	  j[MESSAGE_INFO] = remove_response.info;
+	  j[MESSAGE_REMOVE] = toJSON(remove_response.remove);
+	  return j;
+  }  
+ 
+  /**
    * Converts a "search" message to a JSON object
    * @param search message
    * @return JSON object representation
@@ -170,6 +196,13 @@ class JsonConverter {
       case ADD_RESPONSE: {
         return toJSON((AddResponseMessage &) msg);
       }
+	  case REMOVE: {
+		  return toJSON((RemoveMessage &)msg);
+	  }
+
+	  case REMOVE_RESPONSE: {
+		  return toJSON((RemoveResponseMessage &)msg);
+	  }
       case SEARCH: {
         return toJSON((SearchMessage &) msg);
       }
@@ -241,6 +274,30 @@ class JsonConverter {
   //======================================================
   // TODO: Parse "remove" and response message from JSON
   //======================================================
+
+  /**
+  * Converts a JSON object representing an RemoveMessage to a RemoveMessage object
+  * @param j JSON object
+  * @return RemoveMessage
+  */
+  static RemoveMessage parseRemove(const JSON &jremove) {
+	  Song song = parseSong(jremove[MESSAGE_SONG]);
+	  return RemoveMessage(song);
+  }
+
+  /**
+  * Converts a JSON object representing an RemoveResponseMessage to a RemoveResponseMessage object
+  * @param j JSON object
+  * @return RemoveMessage
+  */
+  static RemoveResponseMessage parseRemoveResponse(const JSON &jremover) {
+	  RemoveMessage remove = parseRemove(jremover[MESSAGE_REMOVE]);
+	  std::string status = jremover[MESSAGE_STATUS];
+	  std::string info = jremover[MESSAGE_INFO];
+	  return RemoveResponseMessage(remove, status, info);
+  }
+
+
 
   /**
    * Converts a JSON object representing a SearchMessage to a SearchMessage object
@@ -321,6 +378,12 @@ class JsonConverter {
       case ADD_RESPONSE: {
         return std::unique_ptr<Message>(new AddResponseMessage(parseAddResponse(jmsg)));
       }
+	  case REMOVE: {
+		  return std::unique_ptr<Message>(new RemoveMessage(parseRemove(jmsg)));
+	  }
+	  case REMOVE_RESPONSE: {
+		  return std::unique_ptr<Message>(new RemoveResponseMessage(parseRemoveResponse(jmsg)));
+	  }
       case SEARCH: {
         return std::unique_ptr<Message>(new SearchMessage(parseSearch(jmsg)));
       }

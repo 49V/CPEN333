@@ -56,7 +56,7 @@
 #include "Message.h"
 #include "JsonConverter.h"
 
-#include <cpen333/process/socket.h>
+#include <C:\Users\Mozer\Documents\School\FourthYear\CPEN333\Library\library\include\cpen333\process\socket.h>
 
 #include <algorithm> // for std::min
 
@@ -90,8 +90,8 @@ class JsonMusicLibraryApi : public MusicLibraryApi {
     // encode JSON size, big endian format
     //   (most-significant byte in buff[0])
     char buff[4];
-    size_t size = jsonstr.size()+1;           // one for terminating zero
-    for (int i=4; i-->0;) {
+    size_t size = jsonstr.size() + 1;           // one for terminating zero
+    for (int i = 4; i --> 0;) {
       // cut off byte and shift size over by 8 bits
       buff[i] = (char)(size & 0xFF);
       size = size >> 8;
@@ -117,7 +117,9 @@ class JsonMusicLibraryApi : public MusicLibraryApi {
     //======================================================
     // TODO: read and append to str in chunks of 256 bytes
     //======================================================
-    bool success = false;
+    bool success = socket_.read_all(cbuff, size);
+
+	str.append(cbuff);
 
     return success;
   }
@@ -140,8 +142,15 @@ class JsonMusicLibraryApi : public MusicLibraryApi {
 
     //=================================================
     // TODO: Decode 4-byte big-endian integer size
+	// 1 byte = 8 bits, need to shift by 8 to account for
+	// the increased size
     //=================================================
     int size = 0;
+
+	size = (buff[3] & 0xFF |
+		(buff[2] & 0xFF) << 8 |
+		(buff[1] & 0xFF) << 16 |
+		(buff[0] & 0xFF) << 24);
 
     // read entire JSON string
     std::string str;
