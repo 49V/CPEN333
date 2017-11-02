@@ -16,6 +16,11 @@ class Customer : public cpen333::thread::thread_object {
   OrderQueue& queue_;
   Menu& menu_;
   int id_;
+  
+  // Part 2
+  int servedDishCount = 0;
+  std::mutex customerMutex;
+  std::condition_variable mealServed;
 
  public:
   /**
@@ -44,8 +49,14 @@ class Customer : public cpen333::thread::thread_object {
     //==================================================
     // TODO: Notify main method that order is ready
     //==================================================
-
+	std::unique_lock<decltype(customerMutex)> lock(customerMutex);
+		servedDishCount++;
+	lock.unlock();
+	
+	mealServed.notify_one();
+  
   }
+  
 
   /**
    * Main customer function
@@ -86,7 +97,14 @@ class Customer : public cpen333::thread::thread_object {
     //==================================================
     // TODO: wait for meals to be served
     //==================================================
-
+	// Keep a condition variable that monitors the number of dishes served. Need
+	// To protect access to reading it.
+	safe_printf("Customer %d waiting on meal\n", id_);
+	std::unique_lock <decltype(customerMutex)> lock(customerMutex);
+	mealServed.wait(lock, [&](){return (servedDishCount == 2);});
+	lock.unlock();
+	safe_printf("Customer %d received meal\n", id_);
+	
     // stay for some time
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
