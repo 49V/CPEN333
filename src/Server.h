@@ -18,6 +18,9 @@ class Server : public cpen333::thread::thread_object {
   OrderQueue& queue_;
   const std::vector<Customer*>& customers_;
   int id_;
+  
+  //Part 3
+  Order poisonOrder = {666, 666};
 
  public:
   /**
@@ -52,9 +55,16 @@ class Server : public cpen333::thread::thread_object {
     Order order = queue_.get();
     while (true) {
 
+	  // Check if we have a poison order
+	  if(order == poisonOrder){
+		  break;
+	  }
+	
       // serve order
       safe_printf("Server %d serving {%d,%d}\n", id_, order.customer_id, order.item_id);
 
+	  // Check for the special poison ID
+	  
       // Go find customer and serve
       for (auto& customer : customers_) {
         if (customer->id() == order.customer_id) {

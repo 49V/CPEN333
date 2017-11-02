@@ -6,6 +6,8 @@
 #include "CircularOrderQueue.h"
 #include "DynamicOrderQueue.h"
 
+#define POISON_ID 666
+
 /**
  * Main function to run the restaurant
  * @return
@@ -29,8 +31,8 @@ int main() {
   //    - CircularOrderQueue
   //    - DynamicOrderQueue
   //============================================
-  DynamicOrderQueue order_queue;
-  DynamicOrderQueue serve_queue;
+  CircularOrderQueue order_queue;
+  CircularOrderQueue serve_queue;
 
   for (int i=0; i<nchefs; ++i) {
     chefs.push_back(new Chef(i, order_queue, serve_queue));
@@ -65,7 +67,11 @@ int main() {
   //==================================================
   // TODO: Signal all chefs to leave
   //==================================================
-
+  // Add nchefs poison pills to the order_queue
+  for(int i = 0; i < nchefs; ++i){
+	  order_queue.add({POISON_ID, POISON_ID});
+  }
+  
   // wait for all chefs to leave
   for (auto& chef : chefs) {
     chef->join();
@@ -74,7 +80,12 @@ int main() {
   //==================================================
   // TODO: Signal all servers to leave
   //==================================================
-
+  // Add nservers poison pills to the serve_queue
+  
+  for(int i = 0; i < nservers; ++i){
+	  serve_queue.add({POISON_ID, POISON_ID});
+  }
+  
   // wait for all servers to leave
   for (auto& server : servers) {
     server->join();

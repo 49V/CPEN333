@@ -18,6 +18,10 @@ class Chef : public cpen333::thread::thread_object {
   OrderQueue& orders_;
   OrderQueue& serve_;
   int id_;
+  //Part 3
+  Order poisonOrder = {666, 666};
+  
+  
  public:
   /**
    * Create a new chef
@@ -46,7 +50,12 @@ class Chef : public cpen333::thread::thread_object {
     //==================================================
     Order order = orders_.get();
     while (true) {
-
+		
+	  // Check if we have the poison order
+	  if(order == poisonOrder){
+		  break;
+	  }
+	  
       // process order
       safe_printf("Chef %d starting order {%d,%d}\n", id_, order.customer_id, order.item_id);
       std::this_thread::sleep_for(std::chrono::seconds(5));
