@@ -12,7 +12,7 @@
  */
 int main() {
   Menu menu;
-  menu.load("./data/maenam.json");
+  menu.load("../data/maenam.json");
 
   // bunch of chefs, customers and servers
   std::vector<Chef*> chefs;
@@ -29,8 +29,8 @@ int main() {
   //    - CircularOrderQueue
   //    - DynamicOrderQueue
   //============================================
-  SingleOrderQueue order_queue;
-  SingleOrderQueue serve_queue;
+  DynamicOrderQueue order_queue;
+  DynamicOrderQueue serve_queue;
 
   for (int i=0; i<nchefs; ++i) {
     chefs.push_back(new Chef(i, order_queue, serve_queue));
@@ -60,6 +60,8 @@ int main() {
     customer->join();
   }
 
+  std::cout << "ALL CUSTOMERS ARE GONE BOY" << std::endl;
+  
   //==================================================
   // TODO: Signal all chefs to leave
   //==================================================

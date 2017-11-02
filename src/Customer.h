@@ -36,7 +36,7 @@ class Customer : public cpen333::thread::thread_object {
   }
 
   /**
-   * Server customer an order
+   * Serve customer an order
    * @param order order that is complete
    */
   void serve(const Order& order) {

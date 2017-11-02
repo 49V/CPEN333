@@ -30,8 +30,13 @@ class DynamicOrderQueue : public virtual OrderQueue {
     //    - safely add to end of internal queue
     //    - notify others of item availability
     //==================================================
-
-    buff_.push_back(order);
+	
+	//Create a lock to protect our resource
+	std::unique_lock<decltype(mutex_)> lock(mutex_);
+		buff_.push_back(order);
+	lock.unlock();
+	
+	cv_.notify_one();
 
   }
 
@@ -44,8 +49,13 @@ class DynamicOrderQueue : public virtual OrderQueue {
     //==================================================
 
     // get first item in queue
-    Order out = buff_.front();
-    buff_.pop_front();
+	// The reason we lock first is such that the first person to get the mutex, can go in
+	// Nobody gets caught waiting on the CV
+	std::unique_lock<decltype(mutex_)> lock(mutex_);
+		cv_.wait(lock, [&](){return !buff_.empty();});
+		Order out = buff_.front();
+		buff_.pop_front();
+	lock.unlock();
 
     return out;
   }

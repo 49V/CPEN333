@@ -40,11 +40,22 @@ class CircularOrderQueue : public virtual OrderQueue {
     //    - fill slot
     //    - notify others of item availability
     //==================================================
-    int pidx;
-    pidx = pidx_;
-    // update producer index
-    pidx_ = (pidx_+1)%CIRCULAR_BUFF_SIZE;
-    buff_[pidx] = order;
+	
+	// Wait for the empty slot
+	producer_.wait();
+	
+	// When we acquire it, take the producer index and store it
+    int currentProducerIndex;
+	std::unique_lock<decltype(pmutex_)> lock(pmutex_);
+    currentProducerIndex = pidx_;
+	// update producer index
+	pidx_ = (pidx_ + 1) % CIRCULAR_BUFF_SIZE;
+	//Update the buffer to take the current order
+    buff_[currentProducerIndex] = order;
+	lock.unlock();
+	
+	// Update the consumer
+	consumer_.notify();
 
   }
 
@@ -58,11 +69,18 @@ class CircularOrderQueue : public virtual OrderQueue {
     //    - notify others of slot availability
     //==================================================
 
-    int cidx;
-    cidx = cidx_;
-    // update consumer index
-    cidx_ = (cidx_+1)%CIRCULAR_BUFF_SIZE;
-    Order out = buff_[cidx];
+	consumer_.wait();
+	
+    int currentConsumerIndex;
+	std::unique_lock<decltype(cmutex_)> lock(cmutex_);
+    currentConsumerIndex = cidx_;
+	// update consumer index
+	cidx_ = (cidx_ + 1) % CIRCULAR_BUFF_SIZE;
+	// Return the order at the current index
+    Order out = buff_[currentConsumerIndex];
+	lock.unlock();
+	
+	producer_.notify();
 
     return out;
   }
