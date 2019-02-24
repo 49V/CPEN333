@@ -9,3 +9,5 @@ System software engineering was an introduction to writing system software (even
 - Agile
 - Testing (Unit Testing, Integration Testings, Regression Testing)
 - Advanced Patterns (Producer-Consumer, Client-Server, Readers-Writers, RCU)
+
+This repository contains all the coursework that I completed during the semester.
